@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import React, { ReactElement } from "react"
+import React, { ReactElement, useRef } from "react"
 import { IAppPage } from "src/lib/proto"
 
 import VerticalBlock from "src/lib/components/core/Block"
@@ -29,6 +29,7 @@ import { BlockNode, AppRoot } from "src/lib/AppNode"
 import { SessionInfo } from "src/lib/SessionInfo"
 import { IGuestToHostMessage } from "src/lib/hostComm/types"
 import { StreamlitEndpoints } from "src/lib/StreamlitEndpoints"
+import useScrollToBottom from "src/lib/hooks/useScrollToBottom"
 
 import {
   StyledAppViewBlockContainer,
@@ -95,6 +96,13 @@ function AppView(props: AppViewProps): ReactElement {
     sendMessageToHost,
     endpoints,
   } = props
+
+  const mainContainerRef = useRef<HTMLDivElement>(null)
+  const containsChatInput =
+    Array.from(elements.main.getElements()).find(element => {
+      return element.type === "chatInput"
+    }) !== undefined
+  const handleScroll = useScrollToBottom(mainContainerRef)
 
   React.useEffect(() => {
     const listener = (): void => {
@@ -169,6 +177,8 @@ function AppView(props: AppViewProps): ReactElement {
         isEmbedded={embedded}
         disableScrolling={disableScrolling}
         className="main"
+        ref={mainContainerRef}
+        {...(containsChatInput ? { onScroll: handleScroll } : null)}
       >
         {renderBlock(elements.main)}
         {/* Anchor indicates to the iframe resizer that this is the lowest

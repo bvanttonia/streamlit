@@ -66,7 +66,7 @@ def check_session_state_rules(
     if not writes_allowed:
         raise StreamlitAPIException(
             "Values for st.button, st.download_button, st.file_uploader, st.data_editor"
-            " and st.form cannot be set using st.session_state."
+            " st.chat_input, and st.form cannot be set using st.session_state."
         )
 
     if (
