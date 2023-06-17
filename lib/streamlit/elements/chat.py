@@ -56,19 +56,19 @@ class ChatMixin:
     @gather_metrics("chat_input")
     def chat_input(
         self,
-        placeholder: str | None = None,
+        placeholder: str = "Your message",
         *,
         key: Key | None = None,
         max_chars: int | None = None,
         disabled: bool = False,
-        on_change: WidgetCallback | None = None,
+        on_submit: WidgetCallback | None = None,
         args: WidgetArgs | None = None,
         kwargs: WidgetKwargs | None = None,
     ) -> str | None:
         # We default to an empty string here and disallow user choice intentionally
         default = ""
         key = to_key(key)
-        check_callback_rules(self.dg, on_change)
+        check_callback_rules(self.dg, on_submit)
         check_session_state_rules(default_value=default, key=key, writes_allowed=False)
 
         # We omit this check for scripts running outside streamlit, because
@@ -83,8 +83,7 @@ class ChatMixin:
                 )
 
         chat_input_proto = ChatInputProto()
-        if placeholder is not None:
-            chat_input_proto.placeholder = str(placeholder)
+        chat_input_proto.placeholder = str(placeholder)
 
         if max_chars is not None:
             chat_input_proto.max_chars = max_chars
@@ -99,7 +98,7 @@ class ChatMixin:
             "chat_input",
             chat_input_proto,
             user_key=key,
-            on_change_handler=on_change,
+            on_change_handler=on_submit,
             args=args,
             kwargs=kwargs,
             deserializer=serde.deserialize,
