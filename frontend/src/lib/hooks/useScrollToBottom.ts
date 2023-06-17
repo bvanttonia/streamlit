@@ -71,6 +71,7 @@ function useScrollToBottom<T extends HTMLElement>(
 
       // Start observing the target node for configured mutations
       observer.observe(scrollableRef.current, {
+        characterData: true,
         childList: true,
         subtree: true,
       })
